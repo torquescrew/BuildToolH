@@ -1,0 +1,12 @@
+
+
+game loop
+-builds a new list each game second.
+
+create producer update function, combine this into the update 
+for entities that have producer like behaviour.
+
+Try build entity
+ - looks for entity that can build this type that's not busy
+   if succeeds then, create a new game-entity list?
+   
