@@ -11,4 +11,7 @@ executable BuildToolH
                    base >= 4,
                    lens
   ghc-options:     -Wall
+  other-modules:   
+                   Entities2,
+                   GameState2
 
