@@ -1,8 +1,8 @@
-{-# LANGUAGE TemplateHaskell #-}
+--{-# LANGUAGE TemplateHaskell #-}
 
 
 module Entities where
-import Control.Lens
+--import Control.Lens
 --import Producers
 
 data EName = Scv
@@ -100,11 +100,6 @@ removeItem x (y:ys) | x == y    = removeItem x ys
                     | otherwise = y : removeItem x ys
 
 
--- Return new entity list where the given entity is being built.
-startBuilding :: Entity -> [Entity] -> [Entity]
-startBuilding _ []                               = []
-startBuilding e (p:ae) | name p `elem` builtBy e = build p (name e) (buildTime e) : ae
-                       | otherwise               = p : startBuilding e ae
                        
 
 

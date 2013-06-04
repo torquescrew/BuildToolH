@@ -13,5 +13,6 @@ executable BuildToolH
   ghc-options:     -Wall
   other-modules:   
                    Entities2,
-                   GameState2
+                   GameState2,
+                   LensTest
 

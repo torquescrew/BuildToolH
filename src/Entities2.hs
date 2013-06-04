@@ -21,7 +21,7 @@ data EName = Scv
 --               , _builtBy   :: [EName]
 --               } deriving (Show, Eq)
                
-data Entity = Entity   
+data Entity = Entity
                { _eName      :: EName
                , _eMins      :: Double
                , _eGas       :: Double
@@ -29,7 +29,7 @@ data Entity = Entity
                , _eSupply    :: Int
                , _eBuiltBy   :: [EName]
                }
-            | Producer 
+            | Producer
                { _eName      :: EName
                , _eMins      :: Double
                , _eGas       :: Double
@@ -39,7 +39,7 @@ data Entity = Entity
                , _eBuilding  :: EName
                , _eTimeLeft  :: Int
                }
-            | Command 
+            | Command
                { _eName      :: EName
                , _eMins      :: Double
                , _eGas       :: Double
@@ -55,7 +55,10 @@ data Entity = Entity
               deriving (Show, Eq)
               
 --makeLenses ''BaseStats
-makeClassy ''Entity
+makeLenses ''Entity
+
+
+
 
 --makeClassyFor "Entity" "BaseStats" [] ''Entity
 
@@ -72,7 +75,7 @@ m2 = marine & eMins .~ 5
 m3 = marine & eMins +~ 3
 
 
-scv = Producer Scv            50 0  17 1 [CommandCenter] Nil 0
+scv = Producer Scv 50 0 17 1 [CommandCenter] Nil 0
 w = scv ^. eWorkers
 --(->) :: Entity -> BaseStats
 --quickStats e = e^.baseStats

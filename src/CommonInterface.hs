@@ -13,13 +13,13 @@ instance CommonGetters Entity where
    gas    e = Entities.gas'    (baseStats e)
    supply e = Entities.supply' (baseStats e)
 
-instance CommonGetters GameStats where
-   mins   = GameState.mins'
-   gas    = GameState.gas'
-   supply = GameState.supply'
+instance CommonGetters GameState where
+   mins   = gsMins
+   gas    = gsGas
+   supply = gsSupply
    
 
-canAfford :: Entity -> GameStats -> Bool
+canAfford :: Entity -> GameState -> Bool
 canAfford e gs
         |  mins gs >= mins e
         && gas  gs >= gas  e
@@ -27,13 +27,20 @@ canAfford e gs
 canAfford _ _                        = False
 
 
-payFor :: Entity -> GameStats -> GameStats
-payFor e gs = GStats (mins gs - mins e) (gas gs - gas e) (supply gs + supply e) (supplyMax gs) (time gs)
---payFor e gs = gs { mins' = 5 }
+--TODO
+payFor :: Entity -> GameState -> GameState
+--payFor e gs = GStats (mins gs - mins e) (gas gs - gas e) (supply gs + supply e) (gsSupplyMax gs) (gsTime gs)
+payFor e gs = gs { gsMins =  mins gs - mins e
+                 , gsGas = gas gs - gas e
+                 , gsSupply = supply gs + supply e }
+                 
 
+otherthing :: Entity -> GameState -> GameState
+otherthing e gs = payFor e (startBuilding e gs)
+--otherthing e gs = (payFor . startBuilding) e gs
 
-hasBuilder :: Entity -> [Entity] -> Bool
-hasBuilder e = hasBuilder' (builtBy e)
+hasBuilder :: Entity -> GameState -> Bool
+hasBuilder e gs = hasBuilder' (builtBy e) (entities gs)
 
 hasBuilder' :: [EName] -> [Entity] -> Bool
 --hasBuilder' (x:xs) ae = any ((==x) . name) ae || hasBuilder' xs ae
