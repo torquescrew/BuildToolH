@@ -35,27 +35,24 @@ isLineTerminator c = c == '\r' || c == '\n'
 fixLines :: String -> String
 fixLines input = unlines (splitLines input)
 
---type GameState = (GameStats, [Entity])
 
-allEntities :: [Entity]
-allEntities = [create CommandCenter, create Scv, create Scv, create Scv, create Scv, create Scv, create Scv]
 
 terranStart :: GameState
-terranStart = GameState 50 0 6 11 0 allEntities
-
---terranStart :: GameState
---terranStart = (terranStats, allEntities)
+terranStart = GameState 50 0 6 11 0 [create CommandCenter'] []
 
 
 
---payFor :: Entity -> GameState -> GameState
 ----gameLoop :: Entity -> GameState -> GameState
 ----gameLoop e gameState = event
---
-tryBuild :: Entity -> GameState -> Int -> (Bool, GameState)
-tryBuild _ gs 100                  = (False, gs)
-tryBuild e gs _ |  canAfford e gs
-                && hasBuilder e gs = (True, payFor e (startBuilding e gs))
-tryBuild e gs attempts             = tryBuild e gs (attempts + 1)
+
+tryBuild :: Entity -> GameState -> (Bool, GameState)
+tryBuild e gs = tryBuild' e gs 0
+
+
+tryBuild' :: Entity -> GameState -> Int -> (Bool, GameState)
+tryBuild' _ gs 100                  = (False, gs)
+tryBuild' e gs _ |  canAfford  e gs
+                 && hasBuilder e gs = (True, (payFor e . startBuilding e) gs)
+tryBuild' e gs attempts             = tryBuild' e gs (attempts + 1)
 
 

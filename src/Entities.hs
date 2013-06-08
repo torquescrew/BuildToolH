@@ -8,6 +8,7 @@ module Entities where
 data EName = Scv
            | SupplyDepot
            | CommandCenter
+           | CommandCenter'
            | Barracks
            | Marine
            | Nil
@@ -25,24 +26,26 @@ data BaseStats = Stats
 
 
 -- Producer Attributes
-data PAttr = PAttr
-             { building' :: EName
-             , timeLeft' :: Int
-             } deriving (Show, Eq)
+--data PAttr = PAttr
+--             { building' :: EName
+--             , timeLeft' :: Int
+--             } deriving (Show, Eq)
 
 -- Command Attributes
-data CAttr = CAttr
-             { workers :: [Entity] } deriving (Show, Eq)
+--data CAttr = CAttr
+--             { workers :: [Entity] } deriving (Show, Eq)
 
 
-data Entity = Entity   { baseStats :: BaseStats }
+data Entity = Entity   { baseStats :: BaseStats
+                       }
             | Producer { baseStats :: BaseStats
                        , building  :: EName
                        , timeLeft  :: Int
                        }
             | Command  { baseStats :: BaseStats
-                       , pAttr     :: PAttr
-                       , cAttr     :: CAttr
+                       , building  :: EName
+                       , timeLeft  :: Int
+                       , workers   :: [Entity]
                        }
             | NoEntity
               deriving (Show, Eq)
@@ -56,18 +59,16 @@ builtBy e = builtBy'(baseStats e)
 name :: Entity -> EName
 name e = name'(baseStats e)
 
-
---building'' :: Entity -> EName
-
-
+--scv = create Scv
 
 create :: EName -> Entity
-create Scv           = Producer (Stats Scv            50 0  17 1 [CommandCenter]) Nil 0
-create SupplyDepot   = Entity   (Stats SupplyDepot   100 0  30 0 [Scv])
-create CommandCenter = Producer (Stats CommandCenter 400 0 100 0 [Scv])           Nil 0
-create Barracks      = Producer (Stats Barracks      150 0  65 0 [Scv])           Nil 0
-create Marine        = Entity   (Stats Marine         50 0  25 1 [Barracks])
-create Nil           = NoEntity
+create Scv            = Producer (Stats Scv            50 0  17 1 [CommandCenter]) Nil 0
+create SupplyDepot    = Entity   (Stats SupplyDepot   100 0  30 0 [Scv])
+create CommandCenter  = Command  (Stats CommandCenter 400 0 100 0 [Scv])           Nil 0 []
+create CommandCenter' = Command  (Stats CommandCenter 400 0 100 0 [Scv])           Nil 0 [s,s,s,s,s,s] where s = create Scv
+create Barracks       = Producer (Stats Barracks      150 0  65 0 [Scv])           Nil 0
+create Marine         = Entity   (Stats Marine         50 0  25 1 [Barracks])
+create Nil            = NoEntity
 
 
 build :: Entity -> EName -> Int -> Entity

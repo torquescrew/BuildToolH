@@ -27,16 +27,14 @@ canAfford e gs
 canAfford _ _                        = False
 
 
---TODO
 payFor :: Entity -> GameState -> GameState
---payFor e gs = GStats (mins gs - mins e) (gas gs - gas e) (supply gs + supply e) (gsSupplyMax gs) (gsTime gs)
 payFor e gs = gs { gsMins =  mins gs - mins e
                  , gsGas = gas gs - gas e
                  , gsSupply = supply gs + supply e }
                  
 
-otherthing :: Entity -> GameState -> GameState
-otherthing e gs = payFor e (startBuilding e gs)
+--otherthing :: Entity -> GameState -> GameState
+--otherthing e gs = (payFor e . startBuilding e) gs
 --otherthing e gs = (payFor . startBuilding) e gs
 
 hasBuilder :: Entity -> GameState -> Bool
