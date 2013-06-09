@@ -36,17 +36,31 @@ fixLines :: String -> String
 fixLines input = unlines (splitLines input)
 
 
+data GameEvent = GameEvent { evName  :: EName
+                           , evState :: GameState
+                           } deriving Show
+
+-- Don't want to keep track of game entities
+gameEvent :: EName -> GameState -> GameEvent
+gameEvent n gs = GameEvent n gs { commands = [], producers = [] }
+
 
 terranStart :: GameState
 terranStart = GameState 50 0 6 11 0 [create CommandCenter'] []
 
 
 
-----gameLoop :: Entity -> GameState -> GameState
-----gameLoop e gameState = event
-
-tryBuild :: Entity -> GameState -> (Bool, GameState)
-tryBuild e gs = tryBuild' e gs 0
+--gameLoop :: [EName] -> GameState -> [GameEvent] -> [GameEvent]
+--gameLoop (n:buildList) gameState events
+--                | success   = gameLoop buildList newState ((gameEvent n newState) : events)
+--                | otherwise = 
+--                where r        = tryBuild n gameState
+--                      newState = snd r
+--                      success  = fst r
+                
+                
+tryBuild :: EName -> GameState -> (Bool, GameState)
+tryBuild n gs = tryBuild' (create n) gs 0
 
 
 tryBuild' :: Entity -> GameState -> Int -> (Bool, GameState)

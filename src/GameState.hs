@@ -4,13 +4,6 @@ module GameState where
 import Entities
 
 
-
---data GameEntities = GameEntities
---        { commands  :: [Entity]
---        , producers :: [Entity]
---        } deriving Show
-
-
 data GameState = GameState
         { gsMins      :: Double
         , gsGas       :: Double
@@ -39,10 +32,14 @@ startBuilding e gs = gs { commands  = startBuilding' e (commands  gs)
 
 -- Return new entity list where the given entity is being built.
 startBuilding' :: Entity -> [Entity] -> [Entity]
-startBuilding' _ []                               = []
-startBuilding' e (p:ae) | name p `elem` builtBy e = build p (name e) (buildTime e) : ae
-                        | otherwise               = p : startBuilding' e ae
+startBuilding' _ []                      = []
+startBuilding' e (p:ae) 
+               | name p `elem` builtBy e = build p (name e) (buildTime e) : ae
+               | otherwise               = p : startBuilding' e ae
+                        
 
+incrementTime :: GameState -> GameState
+incrementTime gs = gs { gsTime = gsTime gs + 1 }
 
 
 

@@ -77,11 +77,11 @@ build producer = Producer (baseStats producer)
 
 toEntityList :: [String] -> [EName]
 toEntityList (x:xs) = read x : toEntityList xs
-toEntityList _      = []
+toEntityList  _     = []
 
 toStrList :: [EName] -> [String]
 toStrList (x:xs) = show x : toStrList xs
-toStrList _      = []
+toStrList  _     = []
 
 
 -- TODO
