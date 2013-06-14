@@ -46,19 +46,19 @@ gameEvent n gs = GameEvent n gs { commands = [], producers = [] }
 
 
 terranStart :: GameState
-terranStart = GameState 50 0 6 11 0 [create CommandCenter'] []
+terranStart = GameState 50 0 6 11 0 [create CommandCenter'] [] []
 
 
 
---gameLoop :: [EName] -> GameState -> [GameEvent] -> [GameEvent]
---gameLoop (n:buildList) gameState events
---                | success   = gameLoop buildList newState ((gameEvent n newState) : events)
---                | otherwise = 
---                where r        = tryBuild n gameState
---                      newState = snd r
---                      success  = fst r
-                
-                
+gameLoop :: [EName] -> GameState -> [GameEvent] -> [GameEvent]
+gameLoop (n:buildList) gameState events
+                | success   = gameLoop buildList newState ((gameEvent n newState) : events)
+                | otherwise = 
+                where r        = tryBuild n gameState
+                      newState = snd r
+                      success  = fst r
+
+
 tryBuild :: EName -> GameState -> (Bool, GameState)
 tryBuild n gs = tryBuild' (create n) gs 0
 

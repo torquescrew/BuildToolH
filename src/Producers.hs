@@ -1,19 +1,34 @@
 module Producers where
 import Entities
+--import GameState
 
+
+updateProducer :: Entity -> (Entity, [Entity])
+updateProducer p@(Producer _ Nil _) = (p, [])
+updateProducer p@(Producer _ e   0) = (p, [create e])
+updateProducer p                    = (p { timeLeft = timeLeft p - 1 }, [])
+--updateProducer (Producer stats e remaining) = (Producer stats e (remaining - 1), [])
+--updateProducer p                            = (p, [])
+
+
+
+--updateProducers :: GameState -> GameState
+--updateProducers gs = gs { producers = map fst updated, newEntities = concat (map snd updated) }
+--                        where updated = map updateProducer (producers gs)
 --
---updateProducers :: [Entity] -> [Entity]
---updateProducers (p:producers) = updateProducer p ++ updateProducers
+--
+--finishBuilding :: Entity -> GameState -> GameState
+--finishBuilding p@(Producer _ _ _) gs = gs { producers = p : producers gs }
+--finishBuilding e gs 
+--        | name e == SupplyDepot      = gs { gsSupplyMax = (gsSupplyMax gs) + scvProvidedSupply }
+--        | name e == CommandCenter    = gs { producers = e : producers gs } 
+--        | otherwise                  = gs
 
-updateProducer :: Entity -> [Entity]
-updateProducer (Producer stats e remaining) 
-                              | remaining == 0 = [Producer stats Nil 0, create e]
-                              | otherwise      = [Producer stats e (remaining - 1)]
-updateProducer p                               = [ p ]                  
 
 
-updateProducer' :: Entity -> [Entity]
-updateProducer' (Producer stats e remaining) 
-                              | remaining == 0 = [Producer stats Nil 0, create e]
-                              | otherwise      = [Producer stats e (remaining - 1)]
-updateProducer' p                              = [ p ]  
+
+
+
+
+                        
+                        
