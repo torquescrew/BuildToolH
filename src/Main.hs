@@ -2,6 +2,7 @@ module Main where
 import Entities                       
 import GameState     
 import CommonInterface      
+import CommandBuilding
 import System.Environment  (getArgs)
 
 interactWith :: (String -> String) -> FilePath -> FilePath -> IO ()
@@ -36,13 +37,31 @@ fixLines :: String -> String
 fixLines input = unlines (splitLines input)
 
 
-data GameEvent = GameEvent { evName  :: EName
-                           , evState :: GameState
+data GameEvent = GameEvent { evName      :: EName
+                           , evMins      :: Double
+                           , evGas       :: Double
+                           , evSupply    :: Int
+                           , evSupplyMax :: Int
+                           , evTime      :: Int
                            } deriving Show
 
 -- Don't want to keep track of game entities
 gameEvent :: EName -> GameState -> GameEvent
-gameEvent n gs = GameEvent n gs { commands = [], producers = [] }
+gameEvent n gs = GameEvent n (gsMins gs) (gsGas gs) (gsSupply gs) (gsSupplyMax gs) (gsTime gs)
+
+nilEvent :: GameEvent
+nilEvent = GameEvent Nil 0 0 0 0 0
+
+nilEvent' :: GameState -> GameEvent
+nilEvent' gs = GameEvent Nil (gsMins gs) (gsGas gs) (gsSupply gs) (gsSupplyMax gs) (gsTime gs)
+
+
+notNil :: GameEvent -> Bool
+notNil (GameEvent Nil _ _ _ _ _) = False
+notNil _                         = True
+
+removeNilEvents :: [GameEvent] -> [GameEvent]
+removeNilEvents ges = filter notNil ges
 
 
 terranStart :: GameState
@@ -50,17 +69,63 @@ terranStart = GameState 50 0 6 11 0 [create CommandCenter'] [] []
 
 myList = [Scv, Scv, Scv, Scv]
 
-gameLoop :: [EName] -> GameState -> Int -> [GameEvent]
-gameLoop _             gs attemptsLeft
+runGame = removeNilEvents (gameLoop''' myList terranStart 100)
+runGame2 =  (gameLoop''' myList terranStart 100)
+
+try1 = tryBuild Scv
+
+--gameLoop :: [EName] -> GameState -> Int -> [GameEvent]
+--gameLoop _             gs attemptsLeft
+--        | gsTime gs    == 600 = []
+--        | attemptsLeft == 0   = []
+--gameLoop (n:buildList) gs i
+--        | success             = gameEvent n gs2 : gameLoop buildList gs2 100
+--        | otherwise           = gameLoop (n:buildList) (incrementTime gs2) (i-1)
+--        where r       = tryBuild n gs
+--              gs2     = snd r
+--              success = fst r
+--gameLoop _            _  _    = []
+
+
+
+--
+--
+--gameLoop' :: [EName] -> GameState -> Int -> [GameState]
+--gameLoop' _                  gs attemptsLeft
+--        | gsTime gs    == 600 = []
+--        | attemptsLeft == 0   = []
+--gameLoop' list@(n:buildList) gs i
+--        | success             = gs2 : gameLoop' buildList gs2 100
+--        | otherwise           = gameLoop' (list) (incrementTime gs2) (i - 1)
+--        where r       = tryBuild n gs
+--              gs2     = snd r
+--              success = fst r
+--gameLoop' _            _  _    = []
+--
+--
+--gameLoop'' :: [EName] -> GameState -> Int -> [GameState]
+--gameLoop'' _                  _  0 = []
+--gameLoop'' list@(n:buildList) gs i
+--        | success             = gs2 : gameLoop'' buildList gs2 100
+--        | otherwise           = gs2 : gameLoop'' (list) (incrementTime gs2) (i - 1)
+--        where r       = tryBuild n gs
+--              gs2     = snd r
+--              success = fst r
+--gameLoop'' _            _        _ = []
+
+
+gameLoop''' :: [EName] -> GameState -> Int -> [GameEvent]
+--gameLoop''' _                  _  0 = []
+gameLoop''' _                  gs attemptsLeft
         | gsTime gs    == 600 = []
         | attemptsLeft == 0   = []
-gameLoop (n:buildList) gs i
-        | success             = gameEvent n gs2 : gameLoop buildList gs2 100
-        | otherwise           = gameLoop (n:buildList) (incrementTime gs2) (i-1)
+gameLoop''' list@(n:buildList) gs i
+        | success             = gameEvent n gs2 : gameLoop''' buildList gs2 100
+        | otherwise           = nilEvent' gs2 : gameLoop''' (list) (incrementTime gs2) (i - 1)
         where r       = tryBuild n gs
               gs2     = snd r
               success = fst r
-gameLoop _            _  _    = []
+gameLoop''' _            _  _    = []
 
 
 tryBuild :: EName -> GameState -> (Bool, GameState)

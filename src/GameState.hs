@@ -76,6 +76,6 @@ collectMining gs = gs { gsMins = gsMins gs + mineralsMined gs }
 
 
 updateGameState :: GameState -> GameState
-updateGameState = collectMining . updateProducers . updateCommands
+updateGameState = collectMining . updateProducers . updateCommands -- TODO
 
 

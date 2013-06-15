@@ -12,8 +12,9 @@ import Entities
 
 updateCommand :: Entity -> (Entity, [Entity])
 updateCommand c@(Command _ Nil _ _) = (c, [])
-updateCommand c@(Command _ e   0 _) = (c, [create e])
-updateCommand c                     = (c { timeLeft = timeLeft c - 1 }, [])
+updateCommand c@(Command _ e   0 _) = (c { building = Nil }, [create e])
+updateCommand c@(Command _ _   _ _) = (c { timeLeft = timeLeft c - 1 }, [])
+updateCommand e                     = (e, [])
 
 -- TODO: improve this
 mineralsMined'' :: Double -> Double

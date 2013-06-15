@@ -71,8 +71,11 @@ create Marine         = Entity   (Stats Marine         50 0  25 1 [Barracks])
 create Nil            = NoEntity
 
 
+--build :: Entity -> EName -> Int -> Entity
+--build producer = Producer (baseStats producer)
+
 build :: Entity -> EName -> Int -> Entity
-build producer = Producer (baseStats producer)
+build e n t = e { building = n, timeLeft = t }
 
 
 toEntityList :: [String] -> [EName]
@@ -95,10 +98,10 @@ toStrList  _     = []
 --updateEntity e                            es   = e                    : es
 
 
-removeItem :: Eq a => a -> [a] -> [a]
-removeItem _ []                 = []
-removeItem x (y:ys) | x == y    = removeItem x ys
-                    | otherwise = y : removeItem x ys
+--removeItem :: Eq a => a -> [a] -> [a]
+--removeItem _ []                 = []
+--removeItem x (y:ys) | x == y    = removeItem x ys
+--                    | otherwise = y : removeItem x ys
 
 
 scvProvidedSupply :: Int

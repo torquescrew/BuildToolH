@@ -5,8 +5,9 @@ import Entities
 
 updateProducer :: Entity -> (Entity, [Entity])
 updateProducer p@(Producer _ Nil _) = (p, [])
-updateProducer p@(Producer _ e   0) = (p, [create e])
-updateProducer p                    = (p { timeLeft = timeLeft p - 1 }, [])
+updateProducer p@(Producer _ e   0) = (p { building = Nil }, [create e])
+updateProducer p@(Producer _ _   _) = (p { timeLeft = timeLeft p - 1 }, [])
+updateProducer e                    = (e, [])
 --updateProducer (Producer stats e remaining) = (Producer stats e (remaining - 1), [])
 --updateProducer p                            = (p, [])
 
