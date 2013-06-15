@@ -33,9 +33,6 @@ payFor e gs = gs { gsMins =  mins gs - mins e
                  , gsSupply = supply gs + supply e }
                  
 
---otherthing :: Entity -> GameState -> GameState
---otherthing e gs = (payFor e . startBuilding e) gs
---otherthing e gs = (payFor . startBuilding) e gs
 
 hasBuilder :: Entity -> GameState -> Bool
 hasBuilder e gs = hasBuilder' (builtBy e) (entities gs)

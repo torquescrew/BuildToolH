@@ -69,63 +69,23 @@ terranStart = GameState 50 0 6 11 0 [create CommandCenter'] [] []
 
 myList = [Scv, Scv, Scv, Scv]
 
-runGame = removeNilEvents (gameLoop''' myList terranStart 100)
-runGame2 =  (gameLoop''' myList terranStart 100)
+runGame = removeNilEvents (gameLoop myList terranStart 100)
+runGame2 =  (gameLoop myList terranStart 100)
 
 try1 = tryBuild Scv
 
---gameLoop :: [EName] -> GameState -> Int -> [GameEvent]
---gameLoop _             gs attemptsLeft
---        | gsTime gs    == 600 = []
---        | attemptsLeft == 0   = []
---gameLoop (n:buildList) gs i
---        | success             = gameEvent n gs2 : gameLoop buildList gs2 100
---        | otherwise           = gameLoop (n:buildList) (incrementTime gs2) (i-1)
---        where r       = tryBuild n gs
---              gs2     = snd r
---              success = fst r
---gameLoop _            _  _    = []
 
-
-
---
---
---gameLoop' :: [EName] -> GameState -> Int -> [GameState]
---gameLoop' _                  gs attemptsLeft
---        | gsTime gs    == 600 = []
---        | attemptsLeft == 0   = []
---gameLoop' list@(n:buildList) gs i
---        | success             = gs2 : gameLoop' buildList gs2 100
---        | otherwise           = gameLoop' (list) (incrementTime gs2) (i - 1)
---        where r       = tryBuild n gs
---              gs2     = snd r
---              success = fst r
---gameLoop' _            _  _    = []
---
---
---gameLoop'' :: [EName] -> GameState -> Int -> [GameState]
---gameLoop'' _                  _  0 = []
---gameLoop'' list@(n:buildList) gs i
---        | success             = gs2 : gameLoop'' buildList gs2 100
---        | otherwise           = gs2 : gameLoop'' (list) (incrementTime gs2) (i - 1)
---        where r       = tryBuild n gs
---              gs2     = snd r
---              success = fst r
---gameLoop'' _            _        _ = []
-
-
-gameLoop''' :: [EName] -> GameState -> Int -> [GameEvent]
---gameLoop''' _                  _  0 = []
-gameLoop''' _                  gs attemptsLeft
+gameLoop :: [EName] -> GameState -> Int -> [GameEvent]
+gameLoop _                  gs attemptsLeft
         | gsTime gs    == 600 = []
         | attemptsLeft == 0   = []
-gameLoop''' list@(n:buildList) gs i
-        | success             = gameEvent n gs2 : gameLoop''' buildList gs2 100
-        | otherwise           = nilEvent' gs2 : gameLoop''' (list) (incrementTime gs2) (i - 1)
+gameLoop list@(n:buildList) gs i
+        | success             = gameEvent n gs2 : gameLoop buildList gs2 100
+        | otherwise           = nilEvent' gs2 : gameLoop (list) (incrementTime gs2) (i - 1)
         where r       = tryBuild n gs
               gs2     = snd r
               success = fst r
-gameLoop''' _            _  _    = []
+gameLoop _            _  _    = []
 
 
 tryBuild :: EName -> GameState -> (Bool, GameState)

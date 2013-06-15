@@ -1,13 +1,6 @@
 module CommandBuilding where
---import GameState
 import Entities
 
-
---updateCommand :: Entity -> [Entity]
---updateCommand (Command stats e remaining w) 
---              | remaining == 0 = [Command stats Nil 0 w, create e]
---              | otherwise      = [Command stats e (remaining - 1) w]
---updateCommand c                = [ c ] 
 
 
 updateCommand :: Entity -> (Entity, [Entity])
@@ -30,13 +23,4 @@ mineralsMined' w = mineralsMined'' (fromIntegral w :: Double)
 numMiners :: Entity -> Int
 numMiners (Command _ _ _ w) = length w
 numMiners  _                = 0
-
-
---mineralsMined :: GameState -> Double
---mineralsMined gs = foldr ((+) . mined) 0 (commands gs) 
---                   where mined = mineralsMined' . numMiners
---
---
---collectMining :: GameState -> GameState
---collectMining gs = gs { gsMins = gsMins gs + mineralsMined gs }
 
