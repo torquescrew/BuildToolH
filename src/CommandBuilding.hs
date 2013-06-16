@@ -22,5 +22,21 @@ mineralsMined' w = mineralsMined'' (fromIntegral w :: Double)
 
 numMiners :: Entity -> Int
 numMiners (Command _ _ _ w) = length w
-numMiners  _                = 0
+numMiners _                 = error "Asking for numMiners from non Command"
 
+
+mineMins :: Entity -> Entity -> Entity
+mineMins worker c@(Command _ _ _ _) = c { workers = worker : workers c }
+mineMins _      _                   = error "Failed to add worker to Command"
+
+
+minMiners :: [Entity] -> Int
+minMiners workers' = minimum (map numMiners workers')
+
+sendToMineMins' :: Entity -> Int -> [Entity] -> [Entity]
+sendToMineMins' w n (c:cs) | numMiners c == n = mineMins w c : cs
+                           | otherwise        = c : sendToMineMins' w n cs
+sendToMineMins' _ _ _                         = []
+
+
+--collectWorkers :: Entity

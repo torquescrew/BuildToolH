@@ -53,13 +53,22 @@ updateCommands gs = gs { commands      = map fst updated
                        } where updated = map updateCommand (commands gs)
 
 
-finishBuilding :: Entity -> GameState -> GameState
-finishBuilding p@(Producer _ _ _) gs = gs { producers = p : producers gs }
-finishBuilding e gs 
+finishBuilding :: GameState -> Entity -> GameState
+finishBuilding gs p@(Producer _ _ _) = gs { producers = p : producers gs }
+finishBuilding gs e  
         | name e == SupplyDepot      = gs { gsSupplyMax = (gsSupplyMax gs) + scvProvidedSupply }
         | name e == CommandCenter    = gs { producers = e : producers gs } 
         | otherwise                  = gs
 
+
+--fb gs = finishBuilding
+
+finishBuilding' :: GameState -> GameState
+finishBuilding' gs | null changes = gs
+                   | otherwise    = last changes
+                   where changes = (map (finishBuilding gs) (newEntities gs))
+
+--finishBuilding'' gs = finishBuilding'' (
 
 
 incrementTime :: GameState -> GameState
@@ -75,7 +84,15 @@ collectMining :: GameState -> GameState
 collectMining gs = gs { gsMins = gsMins gs + mineralsMined gs }
 
 
+--collectWorkers :: GameState -> GameState
+--collectWorkers gs 
+
+
+sendToMineMins :: Entity -> GameState -> GameState
+sendToMineMins w gs = gs { commands = sendToMineMins' w (minMiners (commands gs)) (commands gs) }
+
+
 updateGameState :: GameState -> GameState
-updateGameState = collectMining . updateProducers . updateCommands -- TODO
+updateGameState = collectMining . updateProducers . updateCommands . finishBuilding'
 
 
