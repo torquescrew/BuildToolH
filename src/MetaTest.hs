@@ -1,6 +1,6 @@
-{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE RankNTypes, MultiParamTypeClasses, TypeSynonymInstances, FlexibleInstances #-}
 module MetaTest where
-
+import Prelude hiding ((<=))
 
 
 func :: String -> [String] -> String -> String
@@ -36,75 +36,39 @@ data If = If { predicate :: String, todo :: String }
         | Else { todo :: String } deriving Show
 
 
-lessThan' :: String -> String -> String
-lessThan' s1 s2 = s1 ++ " < " ++ s2
 
-lessThan'' :: forall a a1. (Show a1, Show a) => a -> a1 -> [Char]
-lessThan'' s' i = (show s') ++ " < " ++ (show i)
+class Compare a where
+   (==) :: a -> Double -> String
+   (<=) :: a -> Double -> String
+   (~=) :: a -> Double -> String
 
---lt :: forall a a1. (Show a1, Show a) => a -> a1 -> [Char]
---lt s' i = (show s') ++ " < " ++ (show i)
---lessThan'' = `lessThan'`
-
-data JSTypes = JString { jstring :: String }
-             | JNumber { jnumber :: Double } deriving Show
-
-class Eq' a where
-   (==) :: a -> a -> String
-   (<=) :: a -> a -> String
-
-instance Eq' JSTypes where
-   a' <= b' = show a' ++ " <= " ++ show b'
-   a' == b' = show a' ++ " == " ++ show b'
-
-workers = "workers"
-lessThan = "<"
-
-workers' = JString "workers"
-
-s :: Int -> String
-s i = show i
-
-js :: String -> String -> String -> String
-js s1 s2 s3 = s1 ++ s2 ++ s3
+instance Compare String where
+   a' <= b' = a' ++ " <= " ++ show b'
+   a' == b' = a' ++ " == " ++ show b'
+   a' ~= b' = a' ++ " = " ++ show b' ++ ";"
 
 
-b = iff [ If "workers <= 16" "mined = 20;"
-        , Else "mined = 34;"
-        ]
+workers :: String
+workers =  "workers"
 
-c = iff [ If (workers ++ lessThan ++ (s 16)) "mined = 20;"
-        , Else "mined = 34;"
-        ]
+mined :: [Char]
+mined = "mined"
 
-d = iff [ If (js workers lessThan $ s 16) "mined = 20;"
-        , Else "mined = 34;"
-        ]
-        
-e = iff [ If (workers `lessThan'` (s 16)) "mined = 20;"
-        , Else "mined = 34;"
-        ]
 
-f = iff [ If (workers `lessThan''` 16) "mined = 20;"
-        , Else "mined = 34;"
-        ]
+h :: String
+h = eval [ If (workers <= 16) (mined ~= 20)
+         , Else (mined ~= 34)
+         ]
         
 
-g = iff' (If (workers `lessThan''` 16) "mined = 20;")
-         (Else "mined = 34;")
-
-h = iff' (If (workers `lessThan''` 16) "mined = 20;")
-         (Else "mined = 34;")        
         
-ifBlock' :: If -> String
-ifBlock' (If p t) = "if (" ++ p ++ ")" ++ " { " ++ t ++ " } "
-ifBlock' (ElseIf p t) = "else if (" ++ p ++ ")" ++ " { " ++ t ++ " } "
-ifBlock' (Else t) = "else { " ++ t ++ " } "
+ifBlock :: If -> String
+ifBlock (If p t) = "if (" ++ p ++ ")" ++ " { " ++ t ++ " } "
+ifBlock (ElseIf p t) = "else if (" ++ p ++ ")" ++ " { " ++ t ++ " } "
+ifBlock (Else t) = "else { " ++ t ++ " } "
 
 
-iff :: [If] -> String
-iff ifs = foldr (++) [] (map ifBlock' ifs)
+eval :: [If] -> String
+eval ifs = foldr (++) [] (map ifBlock ifs)
 
-iff' :: If -> If -> String
-iff' if1 if2 = ifBlock' if1 ++ ifBlock' if2
 
