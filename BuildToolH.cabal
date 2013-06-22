@@ -14,5 +14,6 @@ executable BuildToolH
   other-modules:   
                    Entities2,
                    GameState2,
-                   LensTest
+                   LensTest,
+                   MetaTest
 
