@@ -59,13 +59,12 @@ h :: String
 h = eval [ If (workers <= 16) (mined ~= 20)
          , Else (mined ~= 34)
          ]
-        
 
         
 ifBlock :: If -> String
-ifBlock (If p t) = "if (" ++ p ++ ")" ++ " { " ++ t ++ " } "
+ifBlock (If     p t) = "if ("      ++ p ++ ")" ++ " { " ++ t ++ " } "
 ifBlock (ElseIf p t) = "else if (" ++ p ++ ")" ++ " { " ++ t ++ " } "
-ifBlock (Else t) = "else { " ++ t ++ " } "
+ifBlock (Else     t) = "else { "                        ++ t ++ " } "
 
 
 eval :: [If] -> String
